@@ -16,17 +16,13 @@ int main()
 	init_disp();
 	sei();
 
-	unsigned short l, r;
+	unsigned short x = 0;
 
 	while(1)
 	{
-		set_led_l(get_button_l());
-		set_led_r(get_button_r());
-
-		l = get_button_l() ? 0b10111111 : 0b11111111;
-		r = get_button_r() ? 0b10111111 : 0b11111111;
-
-		disp_raw(l, r);
+		disp_hex(x++);
+		x = x % 256;
+		_delay_ms(250);
 	}
 
     return 0;
