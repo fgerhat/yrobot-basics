@@ -2,8 +2,8 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-static unsigned short disp_l = 0xFF;
-static unsigned short disp_r = 0xFF;
+unsigned short disp_l = 0xFF;
+unsigned short disp_r = 0xFF;
 static unsigned short active_digit = 0;
 static unsigned short disp_enabled = 0;
 
@@ -102,7 +102,7 @@ unsigned short get_segments(unsigned short value)
     else return segments[value];
 }
 
-int disp(unsigned short value)
+int disp_hex(unsigned short value)
 {
     //get output bit values for correct segments
     disp_l = get_segments((value & 0xF0) >> 4);
@@ -111,6 +111,18 @@ int disp(unsigned short value)
     if(!disp_enabled)
         disp_on();
     
+    return 0;
+}
+
+int disp_dec(unsigned short value)
+{
+    value = value % 100;
+    disp_r = get_segments(value % 10);
+    disp_l = get_segments(value / 10);
+
+    if(!disp_enabled)
+        disp_on();
+
     return 0;
 }
 

@@ -7,6 +7,7 @@
 #include <buttons.h>
 #include <buzzer.h>
 #include <display.h>
+#include <drive.h>
 
 int main()
 {
@@ -14,19 +15,39 @@ int main()
 	init_leds();
 	init_buttons();
 	init_disp();
+	init_drive();
 	sei();
 
-	unsigned short l, r;
+	int speed = 0;
 
 	while(1)
 	{
-		set_led_l(get_button_l());
-		set_led_r(get_button_r());
+		disp_dec(steps_l);
+		set_led_l(PIND & (1<<PD2));
+		set_led_r(PIND & (1<<PD3));
 
-		l = get_button_l() ? 0b10111111 : 0b11111111;
-		r = get_button_r() ? 0b10111111 : 0b11111111;
-
-		disp_raw(l, r);
+		if(get_button_r())
+		{
+			speed++;
+			if(speed > 255) speed = 255;
+			set_motor_l(speed);
+			_delay_ms(10);
+		}
+		else if(get_button_l())
+		{
+			speed--;
+			if(speed < -255) speed = -255;
+			set_motor_l(speed);
+			_delay_ms(10);
+		}
+		else
+		{
+			if (speed > 0) speed--;
+			if (speed < 0) speed ++;
+			set_motor_l(speed);
+			_delay_ms(10);
+		}
+		
 	}
 
     return 0;
